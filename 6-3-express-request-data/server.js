@@ -107,7 +107,6 @@ LAB SETUP INSTRUCTIONS
 
 import express from "express";
 const app = express();
-app.use(cors());
 
 // create server
 app.listen(3000, ()=> console.log("API running at http://localhost:3000"));
@@ -143,10 +142,12 @@ app.get("/profile/:first/:last", (req,res)=>{ const { first, last } = req.params
 // Route param middleware example: /users/42
 
 app.param("userId", (req,res,next,userId)=>{
-    userId = parseInt(userId);
-    if( userId<0){
+    const userIdnum = parseInt(userId);
+    if( userIdnum<=0||isNaN(userIdnum)){
         return res.status(400).json({ ok:false, error:"userId must be positive number" });
     }
+    req.userIdnum = userIdnum;
+    next()
 });
 // Route params: /users/:userId route
 /*- create GET /users/:userId

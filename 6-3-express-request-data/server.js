@@ -93,10 +93,10 @@ LAB SETUP INSTRUCTIONS
  * curl "http://localhost:3000/profile/Jack/Black"
  *   → 200 { ok:true, fullName:"Jack Black" }
  *
- * curl "http://localhost:3000/users/42"
+ * curl "http://localhost:3000/users/42"//
  *   → 200 { ok:true, userId:42 }
  *
- * curl -i "http://localhost:3000/users/abc"
+ * curl -i "http://localhost:3000/users/abc" //
  *   → 400 { ok:false, error:"userId must be positive number" }
  *
  * curl -i "http://localhost:3000/users/-5"
@@ -107,7 +107,7 @@ LAB SETUP INSTRUCTIONS
 
 import express from "express";
 const app = express();
-
+app.use(cors());
 
 // create server
 app.listen(3000, ()=> console.log("API running at http://localhost:3000"));
@@ -130,7 +130,7 @@ app.get("/echo", (req,res)=>{ const {name, age} = req.query;
 
 // Route params: /profile/First/Last
 app.get("/profile/:first/:last", (req,res)=>{ const { first, last } = req.params;
-    return res.json({ ok:true, fullName: "<first> <last>"});
+    return res.json({ ok:true, fullName: "${first} ${last}"});
 
 });
 /*   - create app.param("userId", ...)
@@ -143,12 +143,16 @@ app.get("/profile/:first/:last", (req,res)=>{ const { first, last } = req.params
 // Route param middleware example: /users/42
 
 app.param("userId", (req,res,next,userId)=>{
-    userId = parseInt(req.params.id);
+    userId = parseInt(userId);
     if( userId<0){
         return res.status(400).json({ ok:false, error:"userId must be positive number" });
     }
 });
 // Route params: /users/:userId route
+/*- create GET /users/:userId
+- return JSON: { ok:true, userId: req.userIdNum }
+HINT:
+    app.get("/users/:userId", (req,res)=>{ ... });*/
 
-
+app.get("/users/:userId", (req,res)=>{ return res.json({ ok:true, userId: req.userIdNum } )});
 

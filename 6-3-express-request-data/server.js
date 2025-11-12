@@ -129,11 +129,25 @@ app.get("/echo", (req,res)=>{ const {name, age} = req.query;
     return res.json({ ok:true, name, age, msg:"Hello <name>, you are <age>" })});
 
 // Route params: /profile/First/Last
+app.get("/profile/:first/:last", (req,res)=>{ const { first, last } = req.params;
+    return res.json({ ok:true, fullName: "<first> <last>"});
 
+});
+/*   - create app.param("userId", ...)
+  - convert userId to number
+  - if not a positive number → return 400 JSON: { ok:false, error:"userId must be positive number" }
+  - else store numeric value into req.userIdNum and call next()
+  HINT:
+    app.param("userId", (req,res,next,userId)=>{ ... });*/
 
 // Route param middleware example: /users/42
 
-
+app.param("userId", (req,res,next,userId)=>{
+    userId = parseInt(req.params.id);
+    if( userId<0){
+        return res.status(400).json({ ok:false, error:"userId must be positive number" });
+    }
+});
 // Route params: /users/:userId route
 
 
